@@ -8,7 +8,7 @@ const CONFIG = {
     API_BASE_URL: 'http://51.142.225.193:7081/api',
     
     ENDPOINTS: {
-        AGENDAS: '/Agenda/ConsultarAgendasCCE',
+        AGENDAS: '/Agendas/ConsultarAgendasCCE',
         DESCARGAR_IMAGEN: '/ArchivoAgenda/DescargarArchivoAgenda'
     },
     

@@ -37,14 +37,34 @@ class AgendaAPI {
                 }
             });
 
+            console.log('📊 Status de respuesta:', response.status, response.statusText);
+            console.log('📋 Headers:', response.headers);
+
             if (!response.ok) {
+                const errorText = await response.text();
+                console.error('❌ Error en respuesta:', errorText.substring(0, 500));
                 throw new Error(`Error HTTP ${response.status}: ${response.statusText}`);
             }
 
-            const data = await response.json();
-            
+            // Obtener el texto primero para depuración
+            const text = await response.text();
+            console.log('📄 Respuesta cruda (primeros 500 caracteres):', text.substring(0, 500));
+
+            // Intentar parsear como JSON
+            let data;
+            try {
+                data = JSON.parse(text);
+            } catch (parseError) {
+                console.error('❌ Error al parsear JSON. Respuesta no es JSON válido');
+                console.error('Primeros 200 caracteres:', text.substring(0, 200));
+                throw new Error('La API no devolvió JSON válido');
+            }
+
             // Validar que sea un array
             const agendas = Array.isArray(data) ? data : (data.data || []);
+            
+            console.log('✅ Agendas parseadas correctamente. Total:', agendas.length);
+            console.log('📋 Primer evento:', agendas[0]);
             
             // Almacenar en caché
             this.cache.set(cacheKey, {
@@ -92,14 +112,11 @@ class AgendaAPI {
             });
 
             if (!response.ok) {
-                console.warn(`⚠️ No se pudo obtener la imagen ${archivoId}`);
+                console.warn(`⚠️ No se pudo obtener la imagen ${archivoId} - Status: ${response.status}`);
                 return null;
             }
 
             const blob = await response.blob();
-            const imageUrl = URL.createObjectURL(blob);
-            
-            // Convertir a base64 para persistencia
             const base64 = await this._blobToBase64(blob);
             
             // Almacenar en caché

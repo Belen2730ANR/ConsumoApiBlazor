@@ -225,3 +225,11 @@ ul {
         font-size: 2rem;
     }
 }
+
+.loader {
+    text-align: center;
+    padding: 3rem;
+    font-size: 1.2rem;
+    color: var(--primary-color);
+    font-weight: bold;
+}
