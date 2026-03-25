@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Eventos - Agenda CCE</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Segoe+UI:wght@300;400;600;700&family=Trebuchet+MS:wght@700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- HEADER -->
+    <header class="header">
+        <div class="header-content">
+            <div class="logo">
+                <h1>Próximos Eventos</h1>
+            </div>
+            <button class="btn-refresh" id="refreshBtn" title="Actualizar eventos">
+                <span class="icon-refresh">🔄</span> Actualizar
+            </button>
+        </div>
+    </header>
+
+    <!-- CONTENEDOR PRINCIPAL -->
+    <main class="main-container">
+        <!-- SECCIÓN DE HEADER DE EVENTOS -->
+        <section class="eventos-header">
+            <h2>Descubre las actividades que tenemos para ti</h2>
+            <p class="subtitle">Explora nuestros próximos eventos</p>
+        </section>
+
+        <!-- INDICADOR DE CARGA -->
+        <div id="loadingIndicator" class="loading-container" style="display: none;">
+            <div class="spinner"></div>
+            <p>Cargando eventos...</p>
+        </div>
+
+        <!-- INDICADOR DE ERROR -->
+        <div id="errorContainer" class="error-container" style="display: none;">
+            <div class="error-content">
+                <span class="error-icon">⚠️</span>
+                <h3>Error al cargar eventos</h3>
+                <p id="errorMessage"></p>
+                <button class="btn-reintentar" id="retryBtn">Reintentar</button>
+            </div>
+        </div>
+
+        <!-- CONTENEDOR DE EVENTOS -->
+        <div id="eventosContainer" class="eventos-grid">
+            <!-- Las tarjetas se generarán aquí dinámicamente -->
+        </div>
+
+        <!-- SIN EVENTOS -->
+        <div id="noEventosContainer" class="no-eventos" style="display: none;">
+            <div class="no-eventos-content">
+                <span class="icon-empty">📭</span>
+                <h3>No hay eventos disponibles</h3>
+                <p>En este momento no hay eventos programados. Intenta más tarde.</p>
+            </div>
+        </div>
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="footer">
+        <div class="footer-content">
+            <p>&copy; 2026 Eventos CCE. Todos los derechos reservados.</p>
+            <p class="footer-info">Última actualización: <span id="lastUpdate">--</span></p>
+        </div>
+    </footer>
+
+    <!-- SCRIPTS -->
+    <script src="config.js"></script>
+    <script src="api.js"></script>
+    <script src="main.js"></script>
+</body>
+</html>
