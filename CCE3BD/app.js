@@ -1,107 +1,105 @@
 const CONFIG = {
-    URL_BASE: 'http://51.142.225.193:7081/api',
-    TEL_FIJO: '4831164567'
+    // Eliminamos el /api del final para evitar duplicados
+    URL_BASE: "http://51.142.225.193:7081", 
+    // Mantenemos la ruta completa desde la raíz
+    ENDPOINT_AGENDAS: "/api/Agenda/ConsultarAgendasExternas",
+    // Ruta corregida para descargar archivos
+    ENDPOINT_IMAGEN: "/api/ArchivoAgenda/DescargarArchivoAgenda" 
 };
 
-async function cargarAgenda() {
+async function cargarAgendas() {
     const container = document.getElementById('agenda-container');
     
     try {
-        // USAMOS HTTP SIN S (ya que vimos que con S falla por SSL)
-        const response = await fetch(`${CONFIG.URL_BASE}/Agenda/ConsultarAgendasCCE`, {
-            method: 'POST',
+        const urlFinal = `${CONFIG.URL_BASE}${CONFIG.ENDPOINT_AGENDAS}`;
+        console.log("Consultando a:", urlFinal);
+
+        const response = await fetch(urlFinal, {
+            method: 'POST', // Tu controlador C# tiene [HttpPost]
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ Token: "", Identificador: "0", Data: {} })
+            body: JSON.stringify({}) // Cuerpo vacío ya que ConsultarAgendasExternas no usa Peticion<T>
         });
 
-        const res = await response.json();
-        console.log("Respuesta completa del servidor:", res); // Esto nos dirá qué llega exactamente
-
-        // Adaptamos la lectura: si res.Status existe lo usamos, si no, intentamos leer res.Data o res directamente
-        let items = [];
-        if (res.Status && res.Status.Exito === 1) {
-            items = res.Data;
-        } else if (Array.isArray(res)) {
-            items = res; // Por si la API manda el array directo
-        } else if (res.Data && Array.isArray(res.Data)) {
-            items = res.Data; // Por si viene Data pero sin Status
+        if (!response.ok) {
+            throw new Error(`Error del servidor: ${response.status}`);
         }
-        
-        if (items.length > 0) {
-            container.innerHTML = '';
-            // Tomamos los primeros 3
-            const itemsAMostrar = items.slice(0, 3);
-            
-            for (const item of itemsAMostrar) {
-                const card = document.createElement('div');
-                card.className = 'card-evento';
-                
-                // Mapeo seguro de campos
-                const titulo = item.Titulo || "Sin título";
-                const texto = item.Texto || "Sin descripción";
-                const lugar = item.Lugar || "N/A";
-                const fecha = item.FechaPublicacion || item.Fecha || new Date();
 
-                // Buscamos la imagen
-                const foto = item.ArchivosAgenda?.find(a => a.Principal) || item.ArchivosAgenda?.[0];
-                const guidImagen = foto ? foto.Ruta : null;
+        const res = await response.json();
+        console.log("Datos recibidos:", res);
 
-                card.innerHTML = `
-                    <div class="image-box skeleton" id="container-${item.IdAgenda}">
-                        <img src="" id="img-${item.IdAgenda}" alt="${titulo}">
-                    </div>
-                    <div class="content-box">
-                        <h2 class="event-title">${titulo}</h2>
-                        <div class="event-date">${formatearFecha(fecha)}</div>
-                        <p class="event-desc">${texto}</p>
-                        <div class="event-footer">
-                            <div>Ubicación: <strong>${lugar}</strong></div>
-                        </div>
-                    </div>
-                `;
-                
-                container.appendChild(card);
+        const exito = res.status?.exito ?? res.Status?.Exito ?? 0;
+        const lista = res.data ?? res.Data;
 
-                if (guidImagen && guidImagen !== "NA") {
-                    descargarYMostrarImagen(guidImagen, item.IdAgenda);
-                } else {
-                    // Si no hay imagen, quitamos el skeleton
-                    document.getElementById(`container-${item.IdAgenda}`).classList.remove('skeleton');
-                }
-            }
+        if (exito === 1 && Array.isArray(lista)) {
+            container.innerHTML = ''; 
+            lista.forEach(item => {
+                container.appendChild(crearTarjetaAgenda(item));
+            });
         } else {
-            container.innerHTML = '<div class="status-message">No hay eventos para mostrar.</div>';
+            container.innerHTML = `<div class="error">Aviso: ${res.status?.mensaje || "No hay datos"}</div>`;
         }
 
     } catch (error) {
-        console.error("Detalle del fallo:", error);
-        container.innerHTML = `<div class="status-message">Fallo de conexión: ${error.message}</div>`;
+        console.error("Fallo crítico:", error);
+        container.innerHTML = `<div class="error">Error de conexión. Revisa la consola.</div>`;
     }
 }
 
-async function descargarYMostrarImagen(guid, id) {
+function crearTarjetaAgenda(item) {
+    const div = document.createElement('div');
+    div.className = 'card-evento'; // Usando tu clase de CSS original
+
+    // En C#, tu método ConsultarAgendasExternas carga 'ArchivosAgenda'
+    const archivos = item.archivosAgenda || item.ArchivosAgenda || [];
+    const fotoPrincipal = archivos[0]; 
+    const guidImagen = fotoPrincipal?.ruta || fotoPrincipal?.Ruta;
+    const idAgenda = item.idAgenda || item.IdAgenda;
+
+    // Si hay imagen, mostramos el contenedor con skeleton
+    let imagenHtml = `<div class="image-box skeleton" id="img-cont-${idAgenda}">
+                        <img src="" id="img-tag-${idAgenda}" alt="Evento">
+                      </div>`;
+
+    div.innerHTML = `
+        ${imagenHtml}
+        <div class="content-box">
+            <h2 class="event-title">${item.titulo || item.Titulo || 'Sin título'}</h2>
+            <p class="event-desc">${item.texto || item.Texto || ''}</p>
+        </div>
+    `;
+
+    // Si existe el GUID, disparamos la descarga de la imagen por separado
+    if (guidImagen && guidImagen !== "NA") {
+        descargarImagenBase64(guidImagen, idAgenda);
+    }
+
+    return div;
+}
+
+async function descargarImagenBase64(guid, id) {
     try {
-        const response = await fetch(`${CONFIG.URL_BASE}/ArchivoAgenda/DescargarArchivoAgenda`, {
+        const res = await fetch(`${CONFIG.URL_BASE}${CONFIG.ENDPOINT_IMAGEN}`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ Token: "", Data: guid, Identificador: "0" })
+            // Según tu lógica: Data es el GUID e Identificador es el ID de la agenda
+            body: JSON.stringify({ Token: "", Data: guid, Identificador: id.toString() })
         });
-        const res = await response.json();
-        if (res.Status.Exito === 1) {
-            const imgElement = document.getElementById(`img-${id}`);
-            const containerImg = document.getElementById(`container-${id}`);
-            imgElement.src = `data:image/png;base64,${res.Data}`;
+        
+        const json = await res.json();
+        const base64 = json.data || json.Data;
+
+        if (base64) {
+            const imgElement = document.getElementById(`img-tag-${id}`);
+            const container = document.getElementById(`img-cont-${id}`);
+            imgElement.src = `data:image/png;base64,${base64}`;
             imgElement.onload = () => {
-                containerImg.classList.remove('skeleton');
-                imgElement.classList.add('loaded');
+                container.classList.remove('skeleton');
+                imgElement.style.opacity = "1";
             };
         }
-    } catch (err) { console.error("Error imagen:", err); }
+    } catch (e) {
+        console.error("Error descargando imagen:", e);
+    }
 }
 
-function formatearFecha(fechaStr) {
-    const opciones = { day: '2-digit', month: '2-digit', year: 'numeric' };
-    return new Date(fechaStr).toLocaleDateString('es-MX', opciones);
-}
-
-document.addEventListener('DOMContentLoaded', cargarAgenda);
+document.addEventListener('DOMContentLoaded', cargarAgendas);
