@@ -1,0 +1,98 @@
+body {
+    font-family: 'Segoe UI', sans-serif;
+    background-color: #f0f2f5;
+    margin: 0;
+    padding: 40px 20px;
+}
+
+.agenda-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 30px;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.card-evento {
+    background: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 10px 20px rgba(0,0,0,0.05);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    transition: transform 0.3s ease;
+}
+
+.card-evento:hover {
+    transform: translateY(-10px);
+}
+
+.image-box {
+    width: 100%;
+    height: 350px; /* Altura para estilo póster */
+    background-color: #e9ecef;
+    position: relative;
+}
+
+.image-box img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    opacity: 0;
+    transition: opacity 0.5s ease;
+}
+
+.image-box img.loaded {
+    opacity: 1;
+}
+
+.content-box {
+    padding: 20px;
+    text-align: center; /* Centrado como en tu ejemplo */
+}
+
+.event-title {
+    font-size: 1.4rem;
+    color: #1a1a1a;
+    margin: 0 0 10px 0;
+    font-weight: 700;
+}
+
+.event-date {
+    color: #004a99;
+    font-weight: 600;
+    margin-bottom: 15px;
+}
+
+.event-desc {
+    font-size: 0.95rem;
+    color: #666;
+    line-height: 1.5;
+    margin-bottom: 15px;
+}
+
+.event-footer {
+    padding: 15px;
+    border-top: 1px solid #f0f0f0;
+    font-size: 0.85rem;
+    color: #888;
+}
+
+.phone-num {
+    color: #1a1a1a;
+    font-weight: bold;
+    text-decoration: none;
+}
+
+/* Animación de carga */
+.skeleton {
+    background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+    background-size: 200% 100%;
+    animation: loading 1.5s infinite;
+}
+
+@keyframes loading {
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+}
