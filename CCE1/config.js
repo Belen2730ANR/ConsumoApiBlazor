@@ -1,6 +1,5 @@
 /**
  * Configuración centralizada de la API
- * Mantén aquí todas las URLs y constantes
  */
 
 const CONFIG = {
@@ -9,15 +8,15 @@ const CONFIG = {
     
     ENDPOINTS: {
         AGENDAS: '/Agendas/ConsultarAgendasCCE',
-        DESCARGAR_IMAGEN: '/ArchivoAgenda/DescargarArchivoAgenda'
+        DESCARGAR_IMAGEN: '/ArchivoAgenda/DescargarArchivoAgenda' 
     },
     
     // Timeouts (en ms)
-    TIMEOUT: 30000, // 30 segundos
+    TIMEOUT: 30000,
     
     // Configuración de reintentos
     MAX_RETRIES: 3,
-    RETRY_DELAY: 2000, // 2 segundos entre reintentos
+    RETRY_DELAY: 2000,
     
     // Configuración de caché
     CACHE_DURATION: 300000, // 5 minutos
@@ -31,7 +30,6 @@ const CONFIG = {
     }
 };
 
-// Exportar para uso en otros scripts
 if (typeof module !== 'undefined' && module.exports) {
     module.exports = CONFIG;
 }

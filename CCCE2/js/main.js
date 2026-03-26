@@ -8,16 +8,12 @@ async function fetchEvents() {
     const telefonoEstatico = "4831163470";
 
     try {
-        // En un entorno real de Net6.0, esto suele ser un fetch a un endpoint API
-        // Si la URL devuelve HTML, usamos un parser para extraer los datos de la tabla
         const response = await fetch('http://51.142.225.193:7081/EventosCCEH');
         const htmlText = await response.text();
         
-        // Convertimos el texto a un documento DOM manipulable
         const parser = new DOMParser();
         const doc = parser.parseFromString(htmlText, 'text/html');
         
-        // Seleccionamos las filas de la tabla (ajusta el selector según la tabla de Blazor)
         const rows = doc.querySelectorAll('table tbody tr');
         
         if (rows.length === 0) {
@@ -25,12 +21,12 @@ async function fetchEvents() {
             return;
         }
 
-        loader.style.display = 'none'; // Ocultamos el cargador
+        loader.style.display = 'none'; 
 
         rows.forEach(row => {
             const cells = row.querySelectorAll('td');
             
-            // Mapeo de datos (Ajusta los índices según el orden de tu tabla original)
+            
             const evento = {
                 nombre: cells[0]?.innerText || 'Evento sin nombre',
                 fecha: cells[1]?.innerText || 'Fecha pendiente',
@@ -40,7 +36,7 @@ async function fetchEvents() {
                 descripcion: cells[5]?.innerText || 'Sin descripción disponible'
             };
 
-            // Creamos el HTML de la tarjeta dinámicamente
+            // HTML de la tarjeta dinámicamente
             const cardHTML = `
                 <article class="event-card">
                     <div class="card-image-container">

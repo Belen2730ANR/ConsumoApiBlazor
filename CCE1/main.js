@@ -1,6 +1,5 @@
 /**
  * Lógica principal de la aplicación
- * Maneja la interfaz de usuario y las interacciones
  */
 
 class EventosApp {
@@ -9,17 +8,16 @@ class EventosApp {
         this.init();
     }
 
-    /**
-     * Inicializa la aplicación
-     */
     init() {
         this.setupEventListeners();
-        this.cargarEventos();
+        // Cargar eventos al inicializar
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', () => this.cargarEventos());
+        } else {
+            this.cargarEventos();
+        }
     }
 
-    /**
-     * Configura los event listeners
-     */
     setupEventListeners() {
         const refreshBtn = document.getElementById('refreshBtn');
         const retryBtn = document.getElementById('retryBtn');
@@ -31,16 +29,8 @@ class EventosApp {
         if (retryBtn) {
             retryBtn.addEventListener('click', () => this.cargarEventos());
         }
-
-        // Cargar eventos cuando la página esté lista
-        if (document.readyState === 'loading') {
-            document.addEventListener('DOMContentLoaded', () => this.cargarEventos());
-        }
     }
 
-    /**
-     * Carga los eventos desde la API
-     */
     async cargarEventos() {
         this.mostrarCargando(true);
         this.ocultarError();
@@ -48,14 +38,17 @@ class EventosApp {
         try {
             console.log('📥 Iniciando carga de eventos...');
             
-            // Obtener agendas
             this.agendas = await agendaAPI.obtenerAgendas();
 
-            if (this.agendas.length === 0) {
+            if (!Array.isArray(this.agendas) || this.agendas.length === 0) {
+                console.warn('⚠️ No hay agendas disponibles');
                 this.mostrarSinEventos();
                 this.mostrarCargando(false);
                 return;
             }
+
+            console.log('📋 Total de agendas:', this.agendas.length);
+            console.log('Primera agenda:', this.agendas[0]);
 
             // Cargar imágenes de forma concurrente
             await this.cargarImagenes();
@@ -76,9 +69,6 @@ class EventosApp {
         }
     }
 
-    /**
-     * Carga las imágenes de todas las agendas
-     */
     async cargarImagenes() {
         const promesas = this.agendas.map(async (agenda) => {
             if (agenda.archivoId) {
@@ -95,14 +85,10 @@ class EventosApp {
         await Promise.allSettled(promesas);
     }
 
-    /**
-     * Renderiza los eventos en el DOM
-     */
     renderizarEventos() {
         const container = document.getElementById('eventosContainer');
         container.innerHTML = '';
 
-        // Tomar solo los primeros 3 eventos
         const eventosAMostrar = this.agendas.slice(0, 3);
 
         eventosAMostrar.forEach((agenda, index) => {
@@ -110,46 +96,33 @@ class EventosApp {
             container.appendChild(card);
         });
 
-        // Mostrar contenedor de eventos
         container.style.display = 'grid';
         document.getElementById('noEventosContainer').style.display = 'none';
     }
 
-    /**
-     * Crea una tarjeta de evento
-     * @param {Object} agenda - Datos del evento
-     * @param {number} index - Índice para animación
-     * @returns {HTMLElement} Elemento de la tarjeta
-     */
     crearCard(agenda, index) {
         const card = document.createElement('div');
         card.className = 'evento-card';
         card.style.animationDelay = `${index * 0.1}s`;
 
-        // Formatear fechas
         const fechaInicio = new Date(agenda.fechaInicio);
         const dia = fechaInicio.getDate();
         const mes = fechaInicio.toLocaleString('es-ES', { month: 'short' }).toUpperCase();
         const hora = agenda.hora || 'Por confirmar';
 
-        // Crear HTML de la tarjeta
         card.innerHTML = `
-            <!-- Contenedor de imagen -->
             <div class="evento-imagen-container">
                 ${this.generarImagen(agenda)}
                 
-                <!-- Badge de fecha -->
                 <div class="evento-fecha-badge">
                     <span class="fecha-dia">${dia}</span>
                     <span class="fecha-mes">${mes}</span>
                 </div>
             </div>
 
-            <!-- Contenido de la tarjeta -->
             <div class="evento-contenido">
                 <h3 class="evento-titulo">${this.sanitizar(agenda.titulo)}</h3>
 
-                <!-- Meta información -->
                 <div class="evento-meta">
                     <div class="meta-item">
                         <span class="meta-icon">🕐</span>
@@ -161,16 +134,14 @@ class EventosApp {
                     </div>
                     <div class="meta-item">
                         <span class="meta-icon">📞</span>
-                        <span class="meta-texto">${this.sanitizar(agenda.telefono || 'No disponible')}</span>
+                        <span class="meta-texto">4831164567</span>
                     </div>
                 </div>
 
-                <!-- Descripción -->
                 <p class="evento-descripcion">
                     ${this.sanitizar(agenda.descripcion)}
                 </p>
 
-                <!-- Footer -->
                 <div class="evento-footer">
                     <button class="btn-primario" onclick="eventosApp.verDetalles(${agenda.id})">
                         Ver Detalles
@@ -182,11 +153,6 @@ class EventosApp {
         return card;
     }
 
-    /**
-     * Genera el HTML de la imagen
-     * @param {Object} agenda - Datos del evento
-     * @returns {string} HTML de la imagen
-     */
     generarImagen(agenda) {
         if (agenda.imagenUrl) {
             return `
@@ -209,23 +175,13 @@ class EventosApp {
         `;
     }
 
-    /**
-     * Sanitiza strings para evitar XSS
-     * @param {string} str - String a sanitizar
-     * @returns {string} String sanitizado
-     */
     sanitizar(str) {
         if (!str) return '';
-        
         const div = document.createElement('div');
         div.textContent = str;
         return div.innerHTML;
     }
 
-    /**
-     * Muestra/oculta el indicador de carga
-     * @param {boolean} mostrar - Mostrar u ocultar
-     */
     mostrarCargando(mostrar) {
         const loader = document.getElementById('loadingIndicator');
         if (loader) {
@@ -233,10 +189,6 @@ class EventosApp {
         }
     }
 
-    /**
-     * Muestra el mensaje de error
-     * @param {string} error - Mensaje de error
-     */
     mostrarError(error) {
         const errorContainer = document.getElementById('errorContainer');
         const errorMessage = document.getElementById('errorMessage');
@@ -250,9 +202,6 @@ class EventosApp {
         document.getElementById('noEventosContainer').style.display = 'none';
     }
 
-    /**
-     * Oculta el mensaje de error
-     */
     ocultarError() {
         const errorContainer = document.getElementById('errorContainer');
         if (errorContainer) {
@@ -260,17 +209,11 @@ class EventosApp {
         }
     }
 
-    /**
-     * Muestra el mensaje de sin eventos
-     */
     mostrarSinEventos() {
         document.getElementById('noEventosContainer').style.display = 'flex';
         document.getElementById('eventosContainer').style.display = 'none';
     }
 
-    /**
-     * Actualiza el timestamp de última actualización
-     */
     actualizarTimestamp() {
         const lastUpdate = document.getElementById('lastUpdate');
         if (lastUpdate) {
@@ -279,10 +222,6 @@ class EventosApp {
         }
     }
 
-    /**
-     * Ver detalles de un evento (placeholder)
-     * @param {number} id - ID del evento
-     */
     verDetalles(id) {
         const agenda = this.agendas.find(a => a.id === id);
         if (agenda) {
@@ -292,5 +231,4 @@ class EventosApp {
     }
 }
 
-// Inicializar la aplicación cuando el DOM esté listo
 const eventosApp = new EventosApp();
