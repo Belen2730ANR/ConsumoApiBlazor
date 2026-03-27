@@ -1,0 +1,3 @@
+[19-Feb-2026 18:41:06 Etc/UTC] PHP Fatal error:  __autoload() is no longer supported, use spl_autoload_register() instead in /home/cceh/public_html/bat/phpmailer/PHPMailerAutoload.php on line 45
+[09-Mar-2026 14:25:25 Etc/UTC] PHP Fatal error:  __autoload() is no longer supported, use spl_autoload_register() instead in /home/cceh/public_html/bat/phpmailer/PHPMailerAutoload.php on line 45
+[11-Mar-2026 20:28:10 Etc/UTC] PHP Fatal error:  __autoload() is no longer supported, use spl_autoload_register() instead in /home/cceh/public_html/bat/phpmailer/PHPMailerAutoload.php on line 45

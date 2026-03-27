@@ -1,0 +1,28 @@
+/*
+*
+* Counter
+*/
+
+.counter {
+
+}
+.box-counter {
+	text-align: center;
+	padding: 20px;
+}
+* + .box-counter-title {
+	margin-top: 15px;
+}
+.box-counter-main {
+	font-family: $font-family-sec;
+	font-weight: 700;
+	> * {
+		display: inline;
+	}
+}
+.box-counter-title {
+	font-family: $font-family-base;
+	text-transform: uppercase;
+	letter-spacing: .05em;
+	font-weight: 500;
+}

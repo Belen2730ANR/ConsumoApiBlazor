@@ -1,0 +1,94 @@
+/*
+* Pagination custom
+*/
+
+.pagination {
+	font-size: 0;
+	line-height: 0;
+	@include group(10px);
+}
+
+.page-item {
+	display: inline-block;
+	vertical-align: middle;
+	text-align: center;
+	font-weight: 700;
+}
+
+// Base styles
+.page-link {
+	display: inline-block;
+	min-width: 36px;
+	padding: 7px 7px;
+	border: $pagination-border-width solid $pagination-border-color;
+	font-size: 13px;
+	line-height: 28px;
+	background-color: $pagination-bg;
+	color: $pagination-color;
+	transition: $transition-base;
+	@include media-breakpoint-up(sm) {
+		padding: 10px;
+		min-width: 48px;
+		font-size: 14px;
+	}
+}
+
+// Hover & Focus & Active State
+.page-link {
+	&:hover,
+	&:focus,
+	&:active {
+		color: $pagination-hover-color;
+		background-color: $pagination-hover-bg;
+		border-color: $pagination-hover-border-color;
+		box-shadow: none;
+	}
+}
+
+// Active State
+.page-item.active > .page-link {
+	&,
+	&:hover,
+	&:focus,
+	&:active {
+		color: $pagination-active-color;
+		background-color: $pagination-active-bg;
+		border-color: $pagination-active-border-color;
+	}
+}
+
+// Disabled State
+.page-item.disabled > .page-link {
+	&,
+	&:hover,
+	&:focus,
+	&:active {
+		color: $pagination-disabled-color;
+		background-color: $pagination-disabled-bg;
+		border-color: $pagination-disabled-border-color;
+	}
+}
+
+.page-item-control {
+	.icon::before {
+		font-family: 'FontAwesome';
+		font-size: 11px;
+		line-height: $pagination-line-height;
+	}
+}
+
+// Prev control
+.page-item-control:first-child {
+	.icon::before {
+		content: '\f053';
+		margin-left: -1px;
+	}
+}
+
+// Next control
+.page-item-control:last-child {
+	.icon::before {
+		content: '\f054';
+		margin-right: -1px;
+	}
+}

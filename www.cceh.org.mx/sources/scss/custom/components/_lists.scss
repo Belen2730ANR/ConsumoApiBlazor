@@ -1,0 +1,192 @@
+/*
+* Lists
+*/
+
+/*
+* Vertical list
+*/
+.list {
+	> li + li {
+		margin-top: 6px;
+	}
+}
+
+.list-xs > li + li {
+	margin-top: 5px;
+}
+
+.list-sm > li + li {
+	margin-top: 10px;
+}
+
+.list-md > li + li {
+	margin-top: 18px;
+}
+
+.list-lg > li + li {
+	margin-top: 25px;
+}
+
+.list-xl > li + li {
+	margin-top: 30px;
+}
+
+@include media-breakpoint-up(md) {
+	.list-xl > li + li {
+		margin-top: 60px;
+	}
+}
+
+.list-inline-item:not(:last-child) {
+	margin-right: 0;
+}
+
+
+/*
+* List inline
+*/
+.list-inline {
+	> li {
+		display: inline-block;
+	}
+}
+
+html {
+	.list-inline-sm {
+		@include spacing(15px, 5px);
+
+		@include media-breakpoint-up(lg) {
+			@include spacingX(20px);
+		}
+	}
+	.list-inline-md {
+		@include spacing(20px, 8px);
+
+		@include media-breakpoint-up(lg) {
+			@include spacingX(30px);
+		}
+	}
+}
+
+/*
+* List terms
+*/
+.list-terms {
+	dt + dd {
+		margin-top: 5px;
+	}
+	dd + dt {
+		margin-top: 25px;
+	}
+}
+
+* + .list-terms {
+	margin-top: 25px;
+}
+
+/*
+* Index list
+*/
+.index-list {
+	counter-reset: li;
+
+	> li {
+		.list-index-counter {
+			&:before {
+				content: counter(li, decimal-leading-zero);
+				counter-increment: li;
+			}
+		}
+	}
+}
+
+/*
+* Marked list
+*/
+.list-marked {
+	
+	text-align: left;
+
+	> li {
+		position: relative;
+		padding-left: 25px;
+		
+		&::before {
+			position: absolute;
+			display: inline-block;
+			left: 0;
+			top: 1px;
+			min-width: 25px;
+			content: '\f105';
+			font: 400 14px/24px 'FontAwesome';
+			color: $gray-400;
+		}
+	}
+
+	> li + li {
+		margin-top: 4px;
+	}
+}
+
+* + .list-marked {
+	margin-top: 15px;
+}
+
+p + .list-marked {
+	margin-top: 10px;
+}
+
+/*
+* Ordered List
+*/
+.list-ordered {
+	counter-reset: li;
+	padding-left: 25px;
+	text-align: left;
+
+	> li {
+		position: relative;
+		padding-left: 25px;
+
+		&:before {
+			content: counter(li, decimal) '.';
+			counter-increment: li;
+			position: absolute;
+			top: 0;
+			left: 0;
+			display: inline-block;
+			width: 15px;
+			color: $gray-400;
+		}
+	}
+
+	> li + li {
+		margin-top: 10px;
+	}
+}
+
+* + .list-ordered {
+	margin-top: 15px;
+}
+
+
+.list-tags {
+	font-size: 0;
+	margin-right: -4px;
+	.list-inline-item {
+		margin-right: 4px;
+		margin-bottom: 4px;
+	}
+	a{
+		display: inline-block;
+		font-size: 14px;
+		padding: 3px 10px;
+		border: 1px solid $primary;
+		color: $primary;
+		background: transparent;
+		&:hover {
+			background: $primary;
+			color: $white;
+		}
+	}
+}

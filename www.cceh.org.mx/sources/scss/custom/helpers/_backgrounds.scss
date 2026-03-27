@@ -1,0 +1,112 @@
+/*
+* Backgrounds
+*/
+
+.context-dark {
+	@extend %context-dark;
+	.section-title {
+		color: $gray-200;
+	}
+}
+
+%context-dark {
+	// Logo
+	.brand {
+		.brand-logo-dark {
+			display: none;
+		}
+
+		.brand-logo-light {
+			display: block;
+		}
+	}
+	
+	.box-counter {
+		.box-counter-main {
+			color: $gray-150;
+		}
+		.box-counter-title {
+			color: $gray-250;
+		}
+	}
+}
+
+%context-light {
+	// Logo
+	.brand {
+		.brand-logo-dark {
+			display: block;
+		}
+
+		.brand-logo-light {
+			display: none;
+		}
+	}
+	
+}
+
+/*
+* Light Backgrounds
+*/
+.bg-default {
+	@include bg-behaviour($body-bg);
+}
+
+.bg-gray-100 {
+	@include bg-behaviour($gray-100);
+}
+
+/*
+* Dark Backgrounds
+*/
+.bg-gray-700 {
+	@extend %context-dark;
+	@include bg-behaviour($gray-700);
+	
+}
+.bg-gray-700-filter-70{
+	background: rgba($gray-700, .7); 
+}
+.bg-gray-700-filter-85{
+	background: rgba($gray-700, .85);
+}
+.bg-gray-900-filter-80{
+	background: rgba($gray-900, .8);
+}
+/*
+* Accent Backgrounds
+*/
+.bg-primary {
+	@extend %context-dark;
+	& + & {
+		padding-top: 0;
+	}
+}
+.bg-secondary {
+	@extend %context-dark;
+	@include bg-behaviour($secondary);
+}
+
+/*
+* Background Image
+*/
+.bg-image {
+
+}
+
+[class^='bg-'] {
+	background-size: cover;
+	background-position: center center;
+}
+
+// Desktop only
+//
+html:not(.tablet):not(.mobile) {
+	.bg-fixed {
+		@include media-breakpoint-up(lg) {
+			background-attachment: fixed;
+		}
+	}
+}
+
+

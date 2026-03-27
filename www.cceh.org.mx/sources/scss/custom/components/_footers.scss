@@ -1,0 +1,56 @@
+/*
+* Footers
+*/
+
+//
+// Footer Classic
+//
+
+.footer-classic {
+	
+	
+	
+	.list + .list {
+		margin-top: 15px;
+	}
+	&.bg-gray-700 {
+		color: $gray-200;
+		.list, .link-list {
+			a{
+				color: $gray-200;
+				&:hover {
+					color: $primary;
+				}
+			}
+			span {
+				color: $white;
+			}
+		}
+		.button-default-outline {
+			@include btn-variant($white, transparent, $gray-100, $primary, $white, $primary);
+		}
+		hr{
+			border-color: rgba($white, .1);
+		}
+		.rights {
+			color: $gray-250;
+		}
+		.social-list {
+			.icon {
+				color: $gray-200;
+				&:hover {
+					color: $white;
+				}
+			}
+		}
+	}
+}
+.footer-title {
+	text-transform: capitalize;
+}
+.footer-title + * {
+	margin-top: 30px;
+}
+.footer-classic-bottom {
+	padding: 30px 0;
+}
